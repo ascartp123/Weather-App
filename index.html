@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather</title>
-    <link rel="icon" type="image/png" href="fav.png" />
+   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -22,7 +22,8 @@
         overflow: hidden;
       }
       .main {
-        width: 500px;
+        width: 100%;
+        max-width: 500px;
         min-height: 200px;
         position: relative;
         border-radius: 20px;
@@ -40,10 +41,9 @@
         width: 350px;
         height: 40px;
         border: 0;
-        background: #edfffc;
+        background: #ffffff;
         color: #555;
         padding: 0 10px;
-
         font-size: 20px;
         border-radius: 20px;
         outline: 0;
@@ -58,15 +58,13 @@
         text-align: center;
         margin: 20px auto;
       }
-
       .loader {
         width: 50px;
         padding: 8px;
         aspect-ratio: 1;
         border-radius: 50%;
         background: #25b09b;
-        --_m: conic-gradient(#0000 10%, #000),
-          linear-gradient(#000 0 0) content-box;
+        --_m: conic-gradient(#0000 10%, #000), linear-gradient(#000 0 0) content-box;
         -webkit-mask: var(--_m);
         mask: var(--_m);
         -webkit-mask-composite: source-out;
@@ -78,7 +76,6 @@
           transform: rotate(1turn);
         }
       }
-
       .text {
         font-size: 20px;
       }
@@ -87,7 +84,6 @@
         height: 45px;
         border-radius: 50%;
         border: none;
-
         background-color: rgb(255, 255, 255);
         color: white;
         cursor: pointer;
@@ -97,9 +93,9 @@
         font-size: 20px;
         color: rgb(0, 0, 0);
       }
-      .weaterimg {
-        width: 100px;
-        height: 100px;
+      .weatherimg {
+        width: 80px;
+        height: 80px;
       }
       .col img {
         width: 100px;
@@ -119,13 +115,44 @@
         top: -5px;
         font-size: 30px;
       }
+
+      @media (max-width: 600px) {
+        .main {
+          max-width: 90%;
+          padding: 15px;
+          
+        }
+      
+        .main input {
+          position: relative;
+          left: -10px;
+          font-size: 16px;
+          width: 100%;
+        }
+      
+        .temp {
+          font-size: 20px;
+        }
+      
+        .weatherimg {
+          width: 60px;
+          height: 60px;
+        }
+      
+        button {
+          width: 40px;
+          height: 40px;
+        }
+      }
+      
+
     </style>
   </head>
   <body>
     <div>
       <div class="main">
         <h1>Weather</h1>
-        <input type="text" placeholder="Enter city name" id="input" /><button>
+        <input type="text" placeholder="Enter city name" id="input" /><button id="searchButton">
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
 
@@ -135,7 +162,6 @@
         <div class="detail">
           <div class="text"></div>
           <img src="" class="weatherimg" />
-
           <h2 class="temp"></h2>
           <h2 class="city"></h2>
         </div>
@@ -143,23 +169,19 @@
     </div>
 
     <script>
-
-      let button = document.querySelector("button");
+      let button = document.querySelector("#searchButton");
       let weather = document.querySelector("#input");
       let detail = document.querySelector(".detail");
       let loading = document.querySelector(".loading");
 
-      input.addEventListener("keydown", (e) => {
-
+      weather.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
           button.click();
         }
-
       });
 
       button.addEventListener("click", () => {
-
-        let city = input.value.trim();
+        let city = weather.value.trim();
 
         if (city === "") {
           alert("Please enter a city name");
@@ -170,21 +192,15 @@
         detail.style.display = "none";
 
         fetch(
-          `https://api.weatherapi.com/v1/current.json?key=acc7ecd524e942be84e133559251503&q=
-            ${city}
-            &aqi=yes`
+          `https://api.weatherapi.com/v1/current.json?key=acc7ecd524e942be84e133559251503&q=${city}&aqi=yes`
         )
           .then((response) => {
-
             if (!response.ok) {
-
               throw new Error("City Not Found");
             }
             return response.json();
           })
-
           .then((data) => {
-
             document.querySelector(".city").innerHTML = data.location.name;
             document.querySelector(".temp").innerHTML = data.current.temp_c + "°C";
             document.querySelector(".text").innerHTML = data.current.condition.text;
@@ -192,17 +208,17 @@
 
             loading.style.display = "none";
             detail.style.display = "block";
-            input.value = "";
-
+            weather.value = "";
           })
-
           .catch((error) => {
-            loading.style.display = "none"
-           alert("Invalid City Name");
-
+            loading.style.display = "none";
+            if (error.message === "City Not Found") {
+              alert("Invalid City Name");
+            } else {
+              alert("An error occurred. Please check your internet connection.");
+            }
           });
       });
-      
     </script>
   </body>
 </html>
